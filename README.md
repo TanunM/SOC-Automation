@@ -137,3 +137,66 @@ net start wazuhsvc
 ```
 Once started Wazuh Dashboard will show 1 active agent.
 
+## TheHive Installation and Configuration
+
+Install TheHive with necessary dependencies on the Ubuntu 22.04 VM.  
+A simplified step-by-step guide is provided below. For full details, refer to the [Strangebee guide](https://docs.strangebee.com/thehive/installation/step-by-step-installation-guide/).
+
+### Dependencies & JVM
+```bash
+sudo apt install wget gnupg apt-transport-https git ca-certificates ca-certificates-java curl software-properties-common python3-pip lsb-release
+```
+1. Install Amazon Corretto 11
+```bash
+wget -qO- https://apt.corretto.aws/corretto.key | sudo gpg --dearmor -o /usr/share/keyrings/corretto.gpg
+echo "deb [signed-by=/usr/share/keyrings/corretto.gpg] https://apt.corretto.aws stable main" | sudo tee -a /etc/apt/sources.list.d/corretto.sources.list
+sudo apt update
+sudo apt install java-common java-11-amazon-corretto-jdk
+```
+2. Set JAVA_HOME
+```bash
+echo 'JAVA_HOME="/usr/lib/jvm/java-11-amazon-corretto"' | sudo tee -a /etc/environment
+export JAVA_HOME="/usr/lib/jvm/java-11-amazon-corretto"
+```
+### Apache Cassandra
+1. Add repository
+```bash
+wget -qO- https://downloads.apache.org/cassandra/KEYS | sudo gpg --dearmor -o /usr/share/keyrings/cassandra-archive.gpg
+echo "deb [signed-by=/usr/share/keyrings/cassandra-archive.gpg] https://debian.cassandra.apache.org 41x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+```
+2. Install Cassandra
+```bash
+sudo apt update
+sudo apt install cassandra
+```
+### Elasticsearch
+1. Add repository
+```bash
+wget -qO- https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
+sudo apt-get install apt-transport-https
+echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-7.x.list
+```
+2. Install Elasticsearch
+```bash
+sudo apt update
+sudo apt install elasticsearch
+```
+### TheHive
+1. Download package
+```bash
+wget -O /tmp/thehive_5.5.7-1_all.deb https://thehive.download.strangebee.com/5.5/deb/thehive_5.5.7-1_all.deb
+wget -O /tmp/thehive_5.5.7-1_all.deb.sha256 https://thehive.download.strangebee.com/5.5/sha256/thehive_5.5.7-1_all.deb.sha256
+wget -O /tmp/thehive_5.5.7-1_all.deb.asc https://thehive.download.strangebee.com/5.5/asc/thehive_5.5.7-1_all.deb.asc
+```
+2. Verify integrity and GPG signature
+```bash
+sha256sum /tmp/thehive_5.5.7-1_all.deb
+wget -O /tmp/strangebee.gpg https://keys.download.strangebee.com/latest/gpg/strangebee.gpg
+gpg --import /tmp/strangebee.gpg
+gpg --verify /tmp/thehive_5.5.7-1_all.deb.asc /tmp/thehive_5.5.7-1_all.deb
+```
+3. Install TheHive
+```bash
+sudo apt-get update
+sudo apt-get install /tmp/thehive_5.5.7-1_all.deb
+```
