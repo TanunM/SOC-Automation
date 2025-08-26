@@ -21,10 +21,10 @@ This project provides a guide for implementing an automated Security Operations 
 
 ## **Network Architecture & Workflow**
 
-diagram
-
 **Network Architecture Diagram:**
 This diagram outlines the complete network architecture of the automated SOC setup. It shows how Wazuh gathers logs from the Windows 10 client, and how these logs are subsequently forwarded to Shuffle for enrichment before being logged as alerts in The Hive for incident response.
+
+  <img width="555" height="489" alt="Architecture" src="https://github.com/user-attachments/assets/16edcbea-12b8-425a-8e9a-bbb6cbb5e564" />
 
 **Workflow Diagram:**
 This simplified diagram illustrates the step-by-step flow of a security incident from its initial detection to its final resolution. It specifically highlights the journey of security alerts, showing how they transition:
@@ -32,12 +32,16 @@ This simplified diagram illustrates the step-by-step flow of a security incident
 * Through the enrichment process (**Shuffle**)
 * Into a centralized case management system (**The Hive**)
 
+  <img width="885" height="124" alt="workflow" src="https://github.com/user-attachments/assets/79cad15a-d973-4d8e-a11e-93f7a9aed007" />
+
 **Shuffle Automation Workflow:**
 This detailed visualization of the Shuffle workflow provides a closer look at the automated process. It shows precisely how security alerts are handled:
 * Alerts are collected and processed
 * Alerts are enriched with threat intelligence via the VirusTotal API
 * Alerts are forwarded to The Hive for incident case creation
 * Analysts are notified via email of critical security events
+
+  <img width="1388" height="477" alt="Shuffle" src="https://github.com/user-attachments/assets/4f8a7e43-7593-40dc-a1a0-4a725b60f405" />
 
 ## **Network and VM Setup**
 
