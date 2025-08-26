@@ -18,6 +18,34 @@ This project provides a guide for implementing an automated Security Operations 
 | **Security Tools**  | Wazuh, Sysmon, TheHive, Shuffle, Mimikatz                                                   |
 | **Scripting**       | PowerShell, Bash
 
+## Network Architecture & Workflow
+
+This diagram outlines the complete network architecture of the automated SOC setup.  
+It shows how **Wazuh** gathers logs from the **Windows 10 client**, and how these logs are subsequently forwarded to **Shuffle** for enrichment before being logged as alerts in **The Hive** for incident response.  
+
+---
+
+### Workflow Diagram
+This simplified diagram illustrates the **step-by-step flow** of a security incident from its initial detection to its final resolution.  
+It specifically highlights the journey of security alerts, showing how they transition:  
+
+- From the detection phase (**Wazuh**)  
+- Through the enrichment process (**Shuffle**)  
+- Into a centralized case management system (**The Hive**)  
+
+---
+
+### Shuffle Automation Workflow
+This detailed visualization of the **Shuffle workflow** provides a closer look at the automated process.  
+It shows precisely how security alerts are handled:  
+
+1. Alerts are **collected and processed**  
+2. Alerts are **enriched with threat intelligence** via the **VirusTotal API**  
+3. Alerts are **forwarded to The Hive** for incident case creation  
+4. Analysts are **notified via email** of critical security events  
+
+---
+
 ## Network and VM Setup
 
 ### Virtual Machine Installation
@@ -53,11 +81,11 @@ cd C:\Users\Downloads\sysmon
 Get-Process sysmon64
 ```
 
-## Wazuh Installation and Configuration
+## Wazuh Installation
 
 ### Wazuh Dashboard
-Install and configure the Wazuh dashboard on the **Ubuntu 24.04 VM**.
-
+Install the Wazuh dashboard on the **Ubuntu 24.04 VM**.
+Wazuh official website provides a [guide](https://documentation.wazuh.com/current/installation-guide/index.html) A simplified, step-by-step guide is outlined below for this process.
 1. Update System Packages:  
 ```bash
 sudo apt-get update && sudo apt-get upgrade -y
@@ -88,4 +116,24 @@ Open a browser and navigate to:
 ```
 https://<Wazuh_Dashboard_VM_IP>:443
 ```
+8. Login using the credential which can be found in the password file.
+
+ ## Wazuh Agent Installation
+Install the **Wazuh agent** on the **Windows 10 VM** to enable log collection.  
+
+#### 1. Open PowerShell
+Open **PowerShell as Administrator** on the Windows 10 VM.
+
+#### 2. Run the Installation Command
+In the Wazuh Dashboard, click **Add Agent** to generate a PowerShell command for agent installation.  
+Replace the placeholder `Your IP address here` with the IP address of your **Wazuh Manager**.  
+
+```powershell
+Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.12.0-1.msi -Outfile ${env.tmp}\wazuh-agent.msi; msiexec.exe /i ${env.tmp}\wazuh-agent.msi /q WAZUH_MANAGER='Your IP address here' WAZUH_AGENT_NAME='Your cluster name here' WAZUH_REGISTRATION_SERVER='Your IP address here'
+```
+#### 3. Start the Service
+```powershell
+net start wazuhsvc
+```
+Once started Wazuh Dashboard will show 1 active agent.
 
