@@ -381,6 +381,8 @@ You should now see:
 * Raw Sysmon process creation logs.
 * A high-level alert tagged “Mimikatz Alert” (with MITRE technique T1003).
 
+  <img width="931" height="608" alt="wazuh-mimikatz" src="https://github.com/user-attachments/assets/0a5311fc-b39e-45ba-91af-4e76e18d6a20" />
+
 ## **Workflow Configuration**
 
 ### **Establish Wazuh-Shuffle Connection:**
