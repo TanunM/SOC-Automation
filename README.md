@@ -399,6 +399,8 @@ You should now see:
    ```
 6. Save the file and restart the Wazuh Manager service to apply the changes.
 
+   <img width="1065" height="589" alt="webhook-url" src="https://github.com/user-attachments/assets/ba18aa9f-1cf4-461a-8d75-51fdcdab0c42" />
+
 ### **Parse data**
 After an alert is received, Shuffle must parse the data to extract the SHA256 hash of the malicious file. This is accomplished using a **Regex Capture Group** action.
 1. Click on the "Change ME" icon and change **Find Actions** to **Repeat back to me**.
