@@ -137,7 +137,7 @@ net start wazuhsvc
 ```
 Once started Wazuh Dashboard will show 1 active agent.
 
-## TheHive Installation and Configuration
+## TheHive Installation
 
 Install TheHive with necessary dependencies on the Ubuntu 22.04 VM.  
 A simplified step-by-step guide is provided below. For full details, refer to the [Strangebee guide](https://docs.strangebee.com/thehive/installation/step-by-step-installation-guide/).
@@ -200,3 +200,93 @@ gpg --verify /tmp/thehive_5.5.7-1_all.deb.asc /tmp/thehive_5.5.7-1_all.deb
 sudo apt-get update
 sudo apt-get install /tmp/thehive_5.5.7-1_all.deb
 ```
+## Cassandra + Elasticsearch + TheHive configuration
+
+### Cassandra Configuration
+1. Navigate to Cassandra configuration directory:
+```bash
+cd /etc/cassandra/
+```
+2. Edit cassandra.yaml to configure for TheHive:
+```
+cluster_name: '<desired name>'
+# rpc_address: '<IP address of the Hive server>'
+# listen_address: '<IP address of the Hive server>'
+# seed_provider: ...
+# seeds: '<IP address of the Hive server>:7000'
+```
+3. Save the changes
+4. Delete older files
+```bash
+rm -rf /var/lib/cassandra/*
+```
+5. Restart and enable Cassandra service
+```bash
+sudo systemctl restart cassandra.service
+sudo systemctl enable cassandra
+```
+6. Verify status
+```bash
+sudo systemctl status cassandra.service
+```
+
+### Elasticsearch Configuration
+1. Navigate to Elasticsearch config directory
+```bash
+cd /etc/elasticsearch/
+```
+2. Edit elasticsearch.yml file with the following changes:
+```
+cluster.name: 'thehive'
+node.name: node-1
+network.host: <TheHive_IP>
+http.port: 9200
+cluster.initial_master_nodes: ["node-1"]
+```
+3. Save changes
+4. Restart and enable Elasticsearch service
+```bash
+sudo systemctl restart elasticsearch.service
+sudo systemctl enable elasticsearch.service
+```
+
+### TheHive Configuration
+1. Ensure proper file access
+```bash
+ls -la /opt/thp
+```
+2. Give thehive user access to /opt/thp
+```bash
+sudo chown -R thehive:thehive /opt/thp
+```
+3. Edit TheHive configuration file
+```bash
+sudo nano /etc/thehive/application.conf
+```
+ Set the following:
+```
+application.baseUrl = "http://<IP address of the Hive server>:9000"
+In db.janusgraph section:
+hostname = ["<IP address of the Hive server>"]
+cluster-name = tm
+index.search.hostname = ["<IP address of the Hive server>"]
+If Elasticsearch requires auth:
+index.elasticsearch.auth.username = "<elasticsearch-username>"
+index.elasticsearch.auth.password = "<elasticsearch-password>"
+```
+4. Start and enable TheHive service
+```bash
+sudo systemctl start thehive
+sudo systemctl enable thehive
+```
+5. Access the web interface at:
+```
+http://<YOUR_SERVER_ADDRESS>:9000
+Default login credentials:
+Username: admin@thehive.local
+Password: secret
+```
+
+
+
+
