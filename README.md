@@ -305,6 +305,8 @@ sudo apt-get install /tmp/thehive_5.5.7-1_all.deb
 6. Restart the Wazuh service using PowerShell or Service Manager.
 7. In the Wazuh Dashboard, search for "sysmon" under events. If configured correctly, you should now see Sysmon logs being generated.
 
+   <img width="923" height="592" alt="wazuh-sysmon" src="https://github.com/user-attachments/assets/29d4a4e7-888f-4446-8e4e-421d9dd76c7b" />
+
 ### **Wazuh Configuration for Mimikatz Activity Detection**
 This section configures the Wazuh Manager to collect and visualize logs from a simulated Mimikatz attack. It also includes creating a custom rule to generate alerts when Mimikatz is executed on the Windows endpoint.
 
@@ -322,6 +324,8 @@ Open PowerShell as Administrator and execute Mimikatz:
 cd C:\downloads\mimikatz_trunk\x64
 .\mimikatz.exe
 ```
+
+  <img width="585" height="240" alt="mimikatz" src="https://github.com/user-attachments/assets/bf9a1db1-db6b-4e7d-b23a-c467cef560eb" />
 
 ### **Configure Wazuh Manager for Full Logging**
 On the Ubuntu machine running Wazuh Manager navigate to:
@@ -375,7 +379,7 @@ Run Mimikatz again on the Windows endpoint.
 In Wazuh Dashboard → Discover, search for `mimikatz`.
 You should now see:
 * Raw Sysmon process creation logs.
-* A high-level alert tagged “Mimikatz Activity Detected” (with MITRE technique T1003).
+* A high-level alert tagged “Mimikatz Alert” (with MITRE technique T1003).
 
 ## **Workflow Configuration**
 
@@ -403,11 +407,17 @@ After an alert is received, Shuffle must parse the data to extract the SHA256 ha
    SHA256=([A-Fa-f0-9]{64})  
    ```
 
+  <img width="1066" height="589" alt="shuffletools-conf" src="https://github.com/user-attachments/assets/42e72589-45df-496f-8936-6ad2751d5d01" />
+
+  <img width="296" height="607" alt="regex" src="https://github.com/user-attachments/assets/15d79a58-1047-4bea-9106-51d103d90a66" />
+
 ### **Enrich Alerts:**
 1. Create a VirusTotal account and integrate the **VirusTotal v3** application into the workflow.
 2. Click on the VirusTotal icon and set **Find Actions** to **Get a hash report**.
 3. Authenticate using the API key (copied from your VirusTotal account).
 4. Configure the action to **Get a hash report** using the SHA256 value extracted from the previous step.
+
+    <img width="263" height="560" alt="virustools" src="https://github.com/user-attachments/assets/387240aa-6a2e-4c00-b1bc-49a0453fce4a" />
 
 ### **Create Cases in The Hive**
 1. Add **The Hive** app to the workflow.
@@ -415,10 +425,16 @@ After an alert is received, Shuffle must parse the data to extract the SHA256 ha
    * Add an organization.
    * Add 1 normal user as analyst.
    * Add 1 service user as analyst.
+  
+     <img width="1050" height="676" alt="thehive" src="https://github.com/user-attachments/assets/efcbcd27-59de-47fe-bfca-f30222fca2ad" />
+    
 3. Log in with the normal user account and extract the API key.
 4. Go back to Shuffle and authenticate using:
    * The API key
    * The Hive IP address in the URL
+  
+    <img width="333" height="562" alt="hive" src="https://github.com/user-attachments/assets/684b1e8a-df17-4bd8-9844-a1658deb1beb" />
+     
 5. Click on The Hive icon, go to **Advanced**, and update the JSON with:
    ```
    {
