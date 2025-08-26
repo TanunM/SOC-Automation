@@ -56,7 +56,7 @@ Establish a unified network to enable communication between the VMs.
 
 ### **Install Sysmon on Windows 10**
 Sysmon is a critical tool for detailed logging on the Windows endpoint.
-1. **Download Sysmon:** Download Sysmon from Microsoft Sysinternals and a pre-configured `sysmonconfig.xml` file from Sysmon Modular.
+1. **Download Sysmon:** Download Sysmon from [Microsoft Sysinternals](https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon) and a pre-configured `sysmonconfig.xml` file from 1. **Download Sysmon:** Download  [Sysmon Modular](https://github.com/olafhartong/sysmon-modular) from Microsoft Sysinternals and a pre-configured `sysmonconfig.xml` file from Sysmon Modular..
 2. **Navigate to Directory:** In PowerShell (as Administrator), navigate to the directory where you downloaded the files. For example, `cd C:\Users\YourUsername\Downloads\sysmon`.
 3. **Install Configuration:** Install the Sysmon configuration with the following command:
    ```
@@ -71,7 +71,7 @@ Sysmon is a critical tool for detailed logging on the Windows endpoint.
 ## **Wazuh Installation**
 
 ### **Wazuh Dashboard**
-Install the Wazuh dashboard on the Ubuntu 24.04 VM. The Wazuh official website provides a guide, and a simplified, step-by-step guide is outlined below for this process.
+Install the Wazuh dashboard on the Ubuntu 24.04 VM. The Wazuh official website provides a [guide](https://documentation.wazuh.com/current/installation-guide/index.html), and a simplified, step-by-step guide is outlined below for this process.
 1. **Update System Packages:**
    ```
    sudo apt-get update && sudo apt-get upgrade -y   
@@ -119,7 +119,7 @@ Install the Wazuh agent on the Windows 10 VM to enable log collection.
    Once started, the Wazuh Dashboard will show 1 active agent.
 
 ## **TheHive Installation**
-Install TheHive with necessary dependencies on the Ubuntu 22.04 VM. A simplified step-by-step guide is provided below. For full details, refer to the Strangebee guide.
+Install TheHive with necessary dependencies on the Ubuntu 22.04 VM. A simplified step-by-step guide is provided below. For full details, refer to the [Strangebee guide](https://docs.strangebee.com/thehive/installation/step-by-step-installation-guide/).
 
 ### **Dependencies & JVM**
 ```
@@ -309,7 +309,7 @@ This section configures the Wazuh Manager to collect and visualize logs from a s
    * Under **Virus & threat protection settings**, click **Manage settings**.
    * Scroll to **Exclusions** → **Add or remove exclusions**.
    * Click **+ Add an exclusion** → **Folder**, and select the folder where Mimikatz will be downloaded (e.g., `C:\downloads`).
-2. **Download Mimikatz:** Download Mimikatz to the excluded folder.
+2. **Download Mimikatz:** Download [Mimikatz](https://github.com/gentilkiwi/mimikatz/releases) to the excluded folder.
 ### **Running Mimikatz**
 Open PowerShell as Administrator and execute Mimikatz:
 ```
