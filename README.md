@@ -115,7 +115,7 @@ Install the **Wazuh agent** on the **Windows 10 VM** to enable log collection.
 1. Open PowerShell
 Open **PowerShell as Administrator** on the Windows 10 VM.
 2. Run the Installation Command
-In the Wazuh Dashboard, click **Add Agent** to generate a PowerShell command for agent installation.  
+In the Wazuh Dashboard, click **Add Agent** and filling up the information to generate a PowerShell command for agent installation.  
 Replace the placeholder `Your IP address here` with the IP address of your **Wazuh Manager**.  
 ```powershell
 Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.12.0-1.msi -Outfile ${env.tmp}\wazuh-agent.msi; msiexec.exe /i ${env.tmp}\wazuh-agent.msi /q WAZUH_MANAGER='Your IP address here' WAZUH_AGENT_NAME='Your cluster name here' WAZUH_REGISTRATION_SERVER='Your IP address here'
@@ -278,6 +278,104 @@ Default login credentials:
 Username: admin@thehive.local
 Password: secret
 ```
+
+## Wazuh Agent Configuration (Sysmon and Mimikatz Log Collection)
+
+### Configure Agent on Windows 10 for Sysmon
+1. Navigate to wazuh-agent installation directory on the Windows 10 machine.
+2. Locate the configuration file: ossec.conf
+3. Make a backup of the file before editing.
+4. Add the following section inside ossec.conf:
+```
+<localfile>
+  <location>Microsoft-Windows-Sysmon/Operational</location>
+  <log_format>eventchannel</log_format>
+</localfile>
+```
+5. Save changes.
+6. Restart the Wazuh service using PowerShell or Service Manager
+7. In the Wazuh Dashboard, search for "sysmon" under events.
+8. If configured correctly, you should now see Sysmon logs being generated.
+
+
+### Wazuh Configuration for Mimikatz Activity Detection
+This section configures the Wazuh Manager to collect and visualize logs from a simulated **Mimikatz attack**. It also includes creating a custom rule to generate alerts when Mimikatz is executed on the Windows endpoint.
+
+#### Preparing Windows Endpoint
+ 1. Exclude Download Folder in Windows Defender Before downloading **Mimikatz**, create an exclusion to prevent Defender from deleting it.
+ 2. Open **Windows Security**.
+ 3. Go to **Virus & threat protection**.
+ 4. Under *Virus & threat protection settings*, click **Manage settings**.
+ 5. Scroll to **Exclusions → Add or remove exclusions**.
+ 6. Click **+ Add an exclusion → Folder**, and select the folder where Mimikatz will be downloaded (e.g., `C:\downloads`).
+ 7. Download [mimikatz](https://github.com/gentilkiwi/mimikatz/releases)
+
+#### Running Mimikatz
+1. Open **PowerShell as Administrator** and execute Mimikatz:
+```powershell
+cd C:\downloads\mimikatz_trunk\x64
+.\mimikatz.exe
+```
+2. Configure Wazuh Manager for Full Logging On the Ubuntu machine running Wazuh Manager navigate to:
+    ```bash
+   cd /var/ossec/etc/
+   sudo cp ossec.conf ossec.conf.bak   # Backup
+   sudo nano ossec.conf
+    ```
+3. Inside **ossec_config** modify:
+    ```
+   <logall>yes</logall>
+   <logall_json>yes</logall_json>
+    ```
+4. Save and restart the manager:
+   ```bash
+   sudo systemctl restart wazuh-manager.service
+   ```
+
+#### Filebeat Configuration for Log Indexing
+1. Ensure logs are properly ingested bi navigation to filebeat
+ ```bash
+sudo /etc/filebeat/
+ ```
+2. open filebeat.yml file
+3. Set **archive.enabled: true**
+4. Restart Filebeat
+ ```bash
+sudo systemctl restart filebeat
+ ```
+
+#### Create Wazuh Archive Index in Dashboard
+1. Log into Wazuh Dashboard.
+2. Navigate to Stack Management → Index Patterns.
+3. Create new index pattern
+```wazuh-archive-**```
+4. Go to Discover and select the wazuh-archive-* index to view the full log stream (including Mimikatz events).
+
+#### Custom Rule for Mimikatz Detection
+1. In the Wazuh Manager ruleset, add a custom rule to detect process creation events (Sysmon Event ID 1) for Mimikatz.
+```
+<ruleset>
+  <rule id="100002" level="15">
+    <if_group>sysmon_event1</if_group>
+    <field name="win.eventdata.originalFileName" type="pcre2">(?i)mimikatz\.exe</field>
+    <description>Mimikatz Activity Detected</description>
+    <mitre>
+      <id>T1003</id>
+    </mitre>
+  </rule>
+</ruleset>
+```
+2. Restart Wazuh Manager
+```bash
+sudo systemctl restart wazuh-manager.service
+```
+
+#### Verification
+1. Run Mimikatz again on the Windows endpoint.
+2. In Wazuh Dashboard → Discover, search for mimikatz.
+3. You should now see
+   - Raw Sysmon process creation logs.
+   - A high-level alert tagged “Mimikatz Activity Detected” (with MITRE technique T1003).
 
 
 
