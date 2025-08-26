@@ -122,6 +122,8 @@ Install the Wazuh agent on the Windows 10 VM to enable log collection.
    ```
    Once started, the Wazuh Dashboard will show 1 active agent.
 
+   <img width="824" height="578" alt="Active agent" src="https://github.com/user-attachments/assets/e8433467-f948-46aa-84c4-9f510e15f9e5" />
+
 ## **TheHive Installation**
 Install TheHive with necessary dependencies on the Ubuntu 22.04 VM. A simplified step-by-step guide is provided below. For full details, refer to the [Strangebee guide](https://docs.strangebee.com/thehive/installation/step-by-step-installation-guide/).
 
@@ -343,6 +345,10 @@ The `wazuh-install.sh -a` script automatically sets up Filebeat and the `wazuh-a
 1. Log into Wazuh Dashboard.
 2. Go to **Discover** and select the `wazuh-archives-*` index to view the full log stream (including Mimikatz events).
 
+  <img width="766" height="342" alt="index-pattern" src="https://github.com/user-attachments/assets/4d09b7e6-0ab5-46f2-9b6b-2860f31e79fe" />
+
+  <img width="256" height="352" alt="Discovery" src="https://github.com/user-attachments/assets/fc49d67e-8755-4909-abc5-fa6a7fa6383c" />
+
 ### **Custom Rule for Mimikatz Detection**
 In the Wazuh Manager ruleset, add a custom rule to detect process creation events (Sysmon Event ID 1) for Mimikatz.
 ```
@@ -350,7 +356,7 @@ In the Wazuh Manager ruleset, add a custom rule to detect process creation event
   <rule id="100002" level="15">
     <if_sid>60001</if_sid>
     <field name="win.eventdata.originalFileName" type="pcre2">(?i)mimikatz\.exe</field>
-    <description>Mimikatz Activity Detected</description>
+    <description>Mimikatz Alert</description>
     <mitre>
       <id>T1003</id>
     </mitre>
@@ -449,6 +455,12 @@ After an alert is received, Shuffle must parse the data to extract the SHA256 ha
    * Host
    * Event title
    * Timestamp
+
+*Now run the Workflow and you will see alerts and mail generating.
+
+  <img width="1114" height="598" alt="thehive-alert" src="https://github.com/user-attachments/assets/601fe1a1-8091-4760-a2c9-76bd29fb13dc" />
+
+  <img width="490" height="390" alt="email" src="https://github.com/user-attachments/assets/b56ce94b-85c4-4c7b-88ed-9ff3d35ac969" />
 
 ## **Conclusion**
 This guide successfully outlines a robust, automated SOC workflow that integrates key open-source tools to detect, enrich, and manage security incidents. By automating the response to a simulated Mimikatz attack, the setup demonstrates how organizations can significantly reduce manual effort and improve their security posture. This automated pipeline frees up security analysts to focus on more complex, high-impact tasks.
